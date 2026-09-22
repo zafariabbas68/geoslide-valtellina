@@ -4,7 +4,11 @@
 **Landslide Susceptibility Mapping & Population Exposure Assessment**
 Italian Alps — Valtellina valley, south of Bormio (Lombardy)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/zafariabbas68/geoslide-valtellina)
+> **🔗 Live site:** [geoslide-valtellina.vercel.app](https://geoslide-valtellina.vercel.app)
+> **📦 GitHub:** [github.com/zafariabbas68/geoslide-valtellina](https://github.com/zafariabbas68/geoslide-valtellina)
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success)](https://geoslide-valtellina.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717)](https://github.com/zafariabbas68/geoslide-valtellina)
 
 ---
 
@@ -32,14 +36,14 @@ in medium-to-high risk zones.
 
 ---
 
-## Site Structure
+## Live Pages
 
-| Page | Description |
-|---|---|
-| `index.html` | Landing — study area, layers, pipeline, key results |
-| `pages/methodology.html` | Datasets, preprocessing, R model, exposure |
-| `pages/webgis.html` | Interactive Leaflet WebGIS with 10 layers |
-| `pages/results.html` | Error matrix, exposure charts, prospects |
+| Page | URL | Description |
+|---|---|---|
+| **Home** | [geoslide-valtellina.vercel.app](https://geoslide-valtellina.vercel.app) | Landing — study area, layers, pipeline, key results |
+| **Methodology** | [/pages/methodology](https://geoslide-valtellina.vercel.app/pages/methodology) | Datasets, preprocessing, R model, exposure |
+| **WebGIS** | [/pages/webgis](https://geoslide-valtellina.vercel.app/pages/webgis) | Interactive Leaflet WebGIS with 10 layers |
+| **Results** | [/pages/results](https://geoslide-valtellina.vercel.app/pages/results) | Error matrix, exposure charts, prospects |
 
 ---
 
@@ -68,6 +72,7 @@ in medium-to-high risk zones.
 | **Leaflet-Geoman** | Draw ROI tools |
 | **georaster / geoblaze** | Client-side raster sampling |
 | **proj4js** | UTM ↔ WGS84 conversion |
+| **Vercel** | Static hosting & edge caching |
 
 ---
 
@@ -88,4 +93,83 @@ in medium-to-high risk zones.
 ## Run Locally
 
 ```bash
+# Clone the repo
+git clone https://github.com/zafariabbas68/geoslide-valtellina.git
+cd geoslide-valtellina
+
+# Serve locally
 python -m http.server 5500
+```
+
+Then open:
+- http://localhost:5500/ — Home
+- http://localhost:5500/pages/webgis.html — WebGIS
+- http://localhost:5500/pages/methodology.html — Methodology
+- http://localhost:5500/pages/results.html — Results
+
+> ⚠️ Use `http://` — do not open HTML with `file://` (COG loading fails).
+
+---
+
+## Repository Layout
+
+```
+geoslide-valtellina/
+├── index.html                       # Landing page
+├── vercel.json                      # Deployment config
+├── README.md
+├── LICENSE                          # MIT
+├── .gitignore
+│
+├── pages/
+│   ├── methodology.html
+│   ├── webgis.html
+│   └── results.html
+│
+├── assets/
+│   ├── css/
+│   │   ├── custom-styles.css        # Dark red theme
+│   │   └── main.css
+│   └── js/
+│
+├── images/
+│   ├── processed layers/            # 10 layer previews
+│   ├── Error_Matrix.jpg
+│   ├── pop_pie_chart.jpg
+│   └── population_counts.jpg
+│
+└── data/
+    ├── tiles/                       # Susceptibility XYZ tiles
+    ├── hillshade/                   # Hillshade XYZ tiles
+    ├── layers/                      # 10 preprocessing rasters
+    ├── susceptibility_cog.tif
+    └── dtm_cog.tif
+```
+
+---
+
+## Deployment
+
+The site is deployed on **Vercel** and auto-redeploys on every push to `main`.
+
+```bash
+# Manual redeploy (if needed)
+npm i -g vercel
+vercel --prod
+```
+
+**Vercel project:** [vercel.com/geo-enrich-core/geoslide-valtellina](https://vercel.com/geo-enrich-core/geoslide-valtellina)
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+---
+
+## Author
+
+**Ghulam Abbas Zafari** · GIS Project · 2026
+
+
