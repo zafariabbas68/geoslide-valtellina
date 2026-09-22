@@ -4,6 +4,17 @@
 **Landslide Susceptibility Mapping & Population Exposure Assessment**
 Italian Alps — Valtellina valley, south of Bormio (Lombardy)
 
+
+## Featured Layers
+
+Sample conditioning layers used in the susceptibility model — each raster
+shown with its own colour palette, ready to explore in the WebGIS.
+
+| NDVI — vegetation greenness | Aspect — slope direction |
+|---|---|
+| ![NDVI](docs/ndvi.png) | ![Aspect](docs/aspect.png) |
+
+
 > **🔗 Live site:** [geoslide-valtellina.vercel.app](https://geoslide-valtellina.vercel.app)
 > **📦 GitHub:** [github.com/zafariabbas68/geoslide-valtellina](https://github.com/zafariabbas68/geoslide-valtellina)
 
