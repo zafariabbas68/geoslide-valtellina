@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>WebGIS · GeoSlide Valtellina</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../assets/css/custom-styles.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.css" />
+<style>
+  :root{
+    --panel-bg: rgba(16,16,20,.94);
+    --panel-bd: #23232a;
+    --panel-tx: #f2f2f4;
+    --panel-mt: #a8a8b2;
+    --panel-rd: #e63946;
+  }
+  #map{
+    position:fixed; top:68px; left:0; right:0; bottom:0;
+    z-index:1; background:#0b0b0d;
+  }
+  .gs-panel{
+    position:fixed; top:88px; left:20px; z-index:1000;
+    width:330px; max-height:calc(100vh - 110px); overflow-y:auto;
+    background:var(--panel-bg);
+    backdrop-filter:blur(16px) saturate(180%);
+    border:1px solid var(--panel-bd);
+    border-radius:14px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.8);
+    padding:20px;
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:14px;
+    color:var(--panel-tx);
+  }
+  .gs-panel h3{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.66rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--panel-rd); margin:22px 0 10px; font-weight:600;
+  }
+  .gs-panel h3:first-of-type{ margin-top:0; }
+  .toggle{ display:flex; align-items:center; gap:10px; padding:9px 10px;
+    border-radius:8px; cursor:pointer; }
+  .toggle:hover{ background:rgba(230,57,70,.08); }
+  .toggle input{ accent-color:var(--panel-rd); width:16px; height:16px; cursor:pointer; }
+  .toggle label{ margin:0; font-size:.9rem; color:var(--panel-tx); cursor:pointer; }
+  .swatch{ display:inline-block; width:14px; height:14px; border-radius:4px;
+    margin-right:8px; vertical-align:middle; border:1px solid rgba(255,255,255,.1); }
+  .legend-row{ display:flex; align-items:center; font-size:.85rem;
+    color:var(--panel-mt); padding:5px 0; }
+  .grad-bar{ height:10px; border-radius:4px; margin:6px 0 12px;
+    background:linear-gradient(90deg,#16a34a 0%,#eab308 33%,#f97316 66%,#dc2626 100%);
+    border:1px solid rgba(255,255,255,.08); }
+  .opacity-row{ display:flex; align-items:center; gap:10px; margin:8px 0 4px;
+    padding:0 10px; font-size:.78rem; color:var(--panel-mt); }
+  .opacity-row input[type=range]{ flex:1; accent-color:var(--panel-rd); cursor:pointer; }
+  .info-box{
+    background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(127,29,29,.06));
+    border:1px solid rgba(230,57,70,.22);
+    border-radius:10px; padding:11px 13px;
+    font-size:.82rem; color:var(--panel-tx); line-height:1.55; margin-top:8px;
+  }
+  .info-box b{ color:#fff; font-weight:600; }
+  .badge{ display:inline-block; padding:2px 8px; border-radius:6px;
+    color:#fff; font-family:'JetBrains Mono',monospace; font-size:.68rem; font-weight:600; }
+  .b-low{background:#16a34a;} .b-mod{background:#eab308;color:#111;}
+  .b-high{background:#f97316;} .b-vhigh{background:#dc2626;}
+  .btn-clear{
+    width:100%; padding:10px; margin-top:10px;
+    border:1px solid var(--panel-bd); background:rgba(230,57,70,.06);
+    border-radius:8px; font-size:.82rem; font-weight:500;
+    color:var(--panel-tx); cursor:pointer; transition:all .15s;
+  }
+  .btn-clear:hover{ border-color:var(--panel-rd); background:rgba(230,57,70,.14); color:#fff; }
+  .leaflet-control-layers,
+  .leaflet-control-zoom a,
+  .leaflet-control-scale-line{
+    background:var(--panel-bg) !important; color:var(--panel-tx) !important;
+    border-color:var(--panel-bd) !important; border-radius:8px !important;
+  }
+  .leaflet-control-zoom a:hover{ background:var(--panel-rd) !important; color:#fff !important; }
+  .leaflet-control-layers-expanded{ background:var(--panel-bg) !important; color:var(--panel-tx) !important; }
+  .leaflet-control-layers label{ color:var(--panel-tx) !important; }
+  .leaflet-control-attribution{ background:rgba(16,16,20,.85) !important; color:var(--panel-mt) !important; }
+  .leaflet-control-attribution a{ color:var(--panel-rd) !important; }
+  .leaflet-pm-toolbar .leaflet-buttons-control-button{
+    background:var(--panel-bg) !important; border-color:var(--panel-bd) !important;
+  }
+  .leaflet-pm-toolbar .leaflet-buttons-control-button:hover{ background:var(--panel-rd) !important; }
+  @media(max-width:820px){
+    .gs-panel{ top:auto; bottom:0; left:0; right:0; width:100%;
+      max-height:45vh; border-radius:14px 14px 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="gs-nav" id="gs-nav">
+  <a href="../index.html" class="brand"><span class="logo">G</span><span>GeoSlide Valtellina</span></a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="methodology.html">Methodology</a></li>
+    <li class="active"><a href="webgis.html">WebGIS</a></li>
+    <li><a href="results.html">Results</a></li>
+  </ul>
+</nav>
+
+<div id="map"></div>
+
+<aside class="gs-panel">
+  <h3>Susceptibility</h3>
+  <div class="toggle"><input type="checkbox" id="lyr-susc" checked><label for="lyr-susc">Landslide susceptibility</label></div>
+  <div class="opacity-row"><span>Opacity</span><input type="range" id="opacity-susc" min="0" max="100" value="85"></div>
+
+  <h3>Terrain</h3>
+  <div class="toggle"><input type="checkbox" id="lyr-dtm" checked><label for="lyr-dtm">DTM (elevation)</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-slope"><label for="lyr-slope">Slope</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-aspect"><label for="lyr-aspect">Aspect</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-plan"><label for="lyr-plan">Plan curvature</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-profile"><label for="lyr-profile">Profile curvature</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-hill" checked><label for="lyr-hill">Hillshade</label></div>
+
+  <h3>Land cover</h3>
+  <div class="toggle"><input type="checkbox" id="lyr-dusaf"><label for="lyr-dusaf">DUSAF (land use)</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-ndvi"><label for="lyr-ndvi">NDVI</label></div>
+
+  <h3>Infrastructure</h3>
+  <div class="toggle"><input type="checkbox" id="lyr-roads"><label for="lyr-roads">Roads</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-rivers"><label for="lyr-rivers">Rivers</label></div>
+  <div class="toggle"><input type="checkbox" id="lyr-faults"><label for="lyr-faults">Geological faults</label></div>
+
+  <h3>Legend — Susceptibility</h3>
+  <div class="grad-bar"></div>
+  <div class="legend-row"><span class="swatch" style="background:#16a34a"></span>Low (0 – 0.25)</div>
+  <div class="legend-row"><span class="swatch" style="background:#eab308"></span>Moderate (0.25 – 0.50)</div>
+  <div class="legend-row"><span class="swatch" style="background:#f97316"></span>High (0.50 – 0.75)</div>
+  <div class="legend-row"><span class="swatch" style="background:#dc2626"></span>Very high (0.75 – 1.0)</div>
+
+  <h3>Study area</h3>
+  <div class="info-box">
+    <b>Area:</b> 140.79 km²<br>
+    <b>Elevation:</b> 943 – 3,414 m<br>
+    <b>Resolution:</b> 5 m<br>
+    <b>CRS:</b> EPSG:32632 (UTM 32N)
+  </div>
+
+  <h3>Click to sample</h3>
+  <div class="info-box" id="click-info">Click on the map to read elevation and susceptibility.</div>
+
+  <h3>Draw ROI</h3>
+  <div class="info-box">Use the rectangle tool (top-left) to clip and get statistics.</div>
+  <div class="info-box" id="roi-info" style="display:none;"></div>
+  <button class="btn-clear" id="clear-roi">Clear ROI</button>
+</aside>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.2/proj4.js"></script>
+<script src="https://unpkg.com/georaster@1.6.0/dist/georaster.browser.bundle.min.js"></script>
+<script src="https://unpkg.com/geoblaze@0.0.12/dist/geoblaze.web.min.js"></script>
+
+<script>
+/* ============================================================
+   Exact raster bounds in EPSG:3857 (Web Mercator)
+   Source: gdalinfo /tmp/_s3857.tif
+   ============================================================ */
+const RASTER_BOUNDS_3857 = {
+  minX: 1144227.424,   // lower left easting
+  minY: 5835868.647,   // lower left northing
+  maxX: 1160093.140,   // upper right easting
+  maxY: 5855187.531    // upper right northing
+};
+
+/* Convert EPSG:3857 → WGS84 for Leaflet */
+proj4.defs('EPSG:3857',
+  '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs');
+
+const SW = proj4('EPSG:3857', 'EPSG:4326',
+  [RASTER_BOUNDS_3857.minX, RASTER_BOUNDS_3857.minY]).reverse();
+const NE = proj4('EPSG:3857', 'EPSG:4326',
+  [RASTER_BOUNDS_3857.maxX, RASTER_BOUNDS_3857.maxY]).reverse();
+const BOUNDS_LL = L.latLngBounds(SW, NE);
+
+/* ---------- Map ---------- */
+const map = L.map('map', {
+  center: BOUNDS_LL.getCenter(),
+  zoom: 13,
+  minZoom: 12,
+  maxZoom: 18,
+  maxBounds: BOUNDS_LL.pad(0.2),
+  maxBoundsViscosity: 1.0,
+  zoomControl: false
+});
+L.control.zoom({ position:'topright' }).addTo(map);
+L.control.scale({ position:'bottomright' }).addTo(map);
+
+/* ---------- Basemaps ---------- */
+const osm  = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  { attribution:'© OpenStreetMap contributors', maxZoom:19, zIndex: 1 }).addTo(map);
+const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+  { attribution:'© OpenTopoMap', zIndex: 1 });
+const sat  = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution:'© Esri', zIndex: 1 });
+
+L.control.layers(
+  { 'OpenStreetMap': osm, 'OpenTopoMap': topo, 'Satellite': sat },
+  {}, { position:'topright' }
+).addTo(map);
+
+/* ---------- Raster overlays with bounds constraint ---------- */
+const susc = L.tileLayer('../data/tiles/{z}/{x}/{y}.png', {
+  opacity: 0.85, minNativeZoom: 12, maxNativeZoom: 17,
+  minZoom: 12, maxZoom: 18,
+  bounds: BOUNDS_LL, zIndex: 400,
+  attribution: 'Susceptibility © GeoSlide Valtellina'
+}).addTo(map);
+
+const hill = L.tileLayer('../data/hillshade/{z}/{x}/{y}.png', {
+  opacity: 0.55, minNativeZoom: 12, maxNativeZoom: 17,
+  minZoom: 12, maxZoom: 18,
+  bounds: BOUNDS_LL, zIndex: 350
+}).addTo(map);
+
+// ---- Helper: build an overlay layer for a preprocessing raster ----
+function buildLayer(name, zIndex, opacity) {
+  return L.tileLayer('../data/layers/' + name + '/{z}/{x}/{y}.png', {
+    opacity: (opacity != null) ? opacity : 0.7,
+    minNativeZoom: 12, maxNativeZoom: 16,
+    minZoom: 12, maxZoom: 18,
+    bounds: BOUNDS_LL, zIndex: zIndex
+  });
+}
+
+const layerDefs = {
+  dtm:     buildLayer('dtm',     200, 0.85),
+  slope:   buildLayer('slope',   250, 0.7),
+  aspect:  buildLayer('aspect',  250, 0.7),
+  plan:    buildLayer('plan',    250, 0.7),
+  profile: buildLayer('profile', 250, 0.7),
+  dusaf:   buildLayer('dusaf',   220, 0.85),
+  ndvi:    buildLayer('ndvi',    220, 0.7),
+  roads:   buildLayer('roads',   280, 0.8),
+  rivers:  buildLayer('rivers',  280, 0.8),
+  faults:  buildLayer('faults',  280)
+};
+
+// ---- Toggles ----
+const bind = (id, layer, on) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.checked = !!on;
+  if (on) layer.addTo(map);
+  el.addEventListener('change', e => {
+    e.target.checked ? layer.addTo(map) : map.removeLayer(layer);
+  });
+};
+
+bind('lyr-susc', susc, true);
+bind('lyr-hill', hill, true);
+bind('lyr-dtm',     layerDefs.dtm,     true);
+bind('lyr-slope',   layerDefs.slope,   false);
+bind('lyr-aspect',  layerDefs.aspect,  false);
+bind('lyr-plan',    layerDefs.plan,    false);
+bind('lyr-profile', layerDefs.profile, false);
+bind('lyr-dusaf',   layerDefs.dusaf,   false);
+bind('lyr-ndvi',    layerDefs.ndvi,    false);
+bind('lyr-roads',   layerDefs.roads,   false);
+bind('lyr-rivers',  layerDefs.rivers,  false);
+bind('lyr-faults',  layerDefs.faults,  false);
+
+document.getElementById('opacity-susc').addEventListener('input', e => {
+  susc.setOpacity(e.target.value / 100);
+});
+
+document.getElementById('opacity-susc').addEventListener('input', e => {
+  susc.setOpacity(e.target.value / 100);
+});
+
+/* ---------- Click to sample ---------- */
+let suscRaster = null, dtmRaster = null;
+fetch('../data/susceptibility_cog.tif')
+  .then(r => r.ok ? r.arrayBuffer() : null)
+  .then(buf => buf ? parseGeoraster(buf) : null)
+  .then(gr => { suscRaster = gr; }).catch(()=>{});
+fetch('../data/dtm_cog.tif')
+  .then(r => r.ok ? r.arrayBuffer() : null)
+  .then(buf => buf ? parseGeoraster(buf) : null)
+  .then(gr => { dtmRaster = gr; }).catch(()=>{});
+
+const classify = v =>
+  isNaN(v)   ? { label:'—',        cls:'' } :
+  v < 0.25   ? { label:'Low',      cls:'b-low' } :
+  v < 0.50   ? { label:'Moderate', cls:'b-mod' } :
+  v < 0.75   ? { label:'High',     cls:'b-high' } :
+               { label:'Very high',cls:'b-vhigh' };
+
+map.on('click', async e => {
+  const info = document.getElementById('click-info');
+  const { lat, lng } = e.latlng;
+  let html = `Lat <b>${lat.toFixed(5)}</b> · Lon <b>${lng.toFixed(5)}</b>`;
+  try {
+    if (dtmRaster && typeof geoblaze !== 'undefined') {
+      const el = await geoblaze.identify(dtmRaster, [lng, lat]);
+      if (el && el[0] != null) html += `<br>Elevation: <b>${(+el[0]).toFixed(0)} m</b>`;
+    }
+    if (suscRaster && typeof geoblaze !== 'undefined') {
+      const sv = await geoblaze.identify(suscRaster, [lng, lat]);
+      if (sv && sv[0] != null) {
+        const c = classify(+sv[0]);
+        html += `<br>Susceptibility: <b>${(+sv[0]).toFixed(3)}</b> `;
+        html += `<span class="badge ${c.cls}">${c.label}</span>`;
+      }
+    }
+  } catch(_) {}
+  info.innerHTML = html;
+});
+
+/* ---------- ROI ---------- */
+map.pm.addControls({
+  position:'topleft',
+  drawRectangle:true, drawPolygon:true,
+  drawCircleMarker:false, drawMarker:false,
+  drawPolyline:false, drawCircle:false,
+  editMode:true, dragMode:false,
+  cutPolygon:false, removalMode:true
+});
+
+map.on('pm:create', async e => {
+  const geom = e.layer.toGeoJSON().geometry;
+  const roiBox = document.getElementById('roi-info');
+  roiBox.style.display = 'block';
+  const ring = geom.coordinates[0].map(c => proj4('EPSG:4326','EPSG:32632', c));
+  let a = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++)
+    a += (ring[j][0] + ring[i][0]) * (ring[j][1] - ring[i][1]);
+  const area_m2 = Math.abs(a / 2);
+  roiBox.innerHTML = `<b>ROI area:</b> ${(area_m2/1e6).toFixed(3)} km² (${(area_m2/1e4).toFixed(2)} ha)`;
+  if (suscRaster && typeof geoblaze !== 'undefined') {
+    try {
+      const st = await geoblaze.stats(suscRaster, geom, ['mean','min','max']);
+      roiBox.innerHTML += `<br>Mean: <b>${st[0].mean.toFixed(3)}</b>`
+                       + `<br>Min ${st[0].min.toFixed(3)} · Max ${st[0].max.toFixed(3)}`;
+    } catch(_) {}
+  }
+});
+
+document.getElementById('clear-roi').onclick = () => {
+  map.eachLayer(l => { if (l.pm && l.pm.getShape) { try { l.remove(); } catch(_) {} } });
+  document.getElementById('roi-info').style.display = 'none';
+};
+
+/* Nav */
+const nav = document.getElementById('gs-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('solid', window.scrollY > 40), { passive:true });
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+</script>
+</body>
+</html>

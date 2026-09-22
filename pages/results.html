@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Results · GeoSlide Valtellina</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../assets/css/custom-styles.css" />
+</head>
+<body>
+
+<nav class="gs-nav" id="gs-nav">
+  <a href="../index.html" class="brand">
+    <span class="logo">G</span>
+    <span>GeoSlide Valtellina</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="methodology.html">Methodology</a></li>
+    <li><a href="webgis.html">WebGIS</a></li>
+    <li class="active"><a href="results.html">Results</a></li>
+  </ul>
+</nav>
+
+<header class="gs-page-head">
+  <span class="eyebrow">Outcome Analysis</span>
+  <h1>Model validation &amp; population exposure</h1>
+  <p>Accuracy metrics, exposure statistics, and interpretation of the susceptibility model for the Valtellina catchment.</p>
+</header>
+
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-stats">
+      <div class="gs-stat"><span class="num">0.69</span><span class="lbl">Overall accuracy</span></div>
+      <div class="gs-stat"><span class="num">700 / 300</span><span class="lbl">Train / test split</span></div>
+      <div class="gs-stat"><span class="num">&gt; 10%</span><span class="lbl">Population · medium+ risk</span></div>
+      <div class="gs-stat"><span class="num">4</span><span class="lbl">Susceptibility classes</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Error matrix -->
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-split">
+      <figure class="gs-media">
+        <img src="../images/Error_Matrix.jpg" alt="Error matrix" />
+      </figure>
+      <div>
+        <span class="eyebrow">Validation</span>
+        <h2>Error matrix</h2>
+        <p>
+          The classification model trained in R was fed 1,000 sample points —
+          700 for training and 300 for testing. The overall accuracy is <b>0.69</b>,
+          which we consider reliable for a first-pass susceptibility map.
+        </p>
+        <p>
+          The error matrix compares predicted vs. actual classes
+          (<i>landslide</i> / <i>non-landslide</i>) and reveals the trade-off
+          between omission and commission errors in the test set.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Population exposure -->
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-split">
+      <div>
+        <span class="eyebrow">Exposure</span>
+        <h2>Population exposure assessment</h2>
+        <p>
+          Overlaying the reclassified susceptibility map with WorldPop reveals
+          that although most inhabitants live in low-risk terrain, <b>more than
+          10 % of the population sits in medium-to-very-high susceptibility
+          classes</b>.
+        </p>
+        <p>
+          This highlights the relevance of landslide prevention and land-use
+          planning in the Valtellina valley — a call to action for
+          civil-protection planning at the municipal level.
+        </p>
+      </div>
+      <figure class="gs-media">
+        <img src="../images/pop_pie_chart.jpg" alt="Population by risk class" />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- Population counts -->
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Numbers</span>
+      <h2>Population counts per class</h2>
+      <p class="lede">Raw statistics from the zonal analysis — actual people living in each susceptibility class.</p>
+    </div>
+    <figure class="gs-media" style="max-width:1000px; margin:0 auto;">
+      <img src="../images/population_counts.jpg" alt="Population counts" />
+    </figure>
+  </div>
+</section>
+
+<!-- Prospects -->
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Prospects</span>
+      <h2>What's next</h2>
+    </div>
+    <div class="gs-grid-3">
+      <div class="gs-card">
+        <div class="icon">→</div>
+        <h3>Transferability</h3>
+        <p>The workflow can be applied to other alpine catchments worldwide, reducing losses from landslides through early-warning and planning.</p>
+      </div>
+      <div class="gs-card">
+        <div class="icon">→</div>
+        <h3>More points, higher accuracy</h3>
+        <p>Increasing the number of sampling points is expected to improve model accuracy and sharpen identification of high-risk zones.</p>
+      </div>
+      <div class="gs-card">
+        <div class="icon">→</div>
+        <h3>Richer exposure data</h3>
+        <p>Future iterations can integrate building footprints, road exposure, and critical infrastructure for a full quantitative risk model.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gs-cta">
+  <h2>See the results on the map</h2>
+  <p>Zoom, toggle terrain layers, and inspect susceptibility values by clicking anywhere.</p>
+  <a href="webgis.html" class="gs-btn gs-btn-primary">Open WebGIS <span class="arrow">→</span></a>
+</div>
+
+<footer class="gs-footer">
+  <div class="gs-footer-inner">
+    <div>
+      <div class="brand-row"><span class="logo">G</span><span>GeoSlide Valtellina</span></div>
+      <p style="color:rgba(255,255,255,.55); font-family:var(--font-serif); font-size:1rem;">
+        Landslide susceptibility mapping &amp; population exposure assessment.
+      </p>
+    </div>
+    <div>
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="methodology.html">Methodology</a></li>
+        <li><a href="webgis.html">WebGIS</a></li>
+        <li><a href="results.html">Results</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Data</h4>
+      <ul>
+        <li>DTM — 5 m raster</li>
+        <li>IFFI inventory</li>
+        <li>WorldPop exposure</li>
+        <li>OpenStreetMap vectors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="gs-footer-bottom">
+    <span>© GeoSlide Valtellina · Academic project</span>
+    <span>QGIS · R · GDAL · Leaflet</span>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('gs-nav');
+const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+</script>
+</body>
+</html>

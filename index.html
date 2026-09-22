@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>GeoSlide Valtellina · Landslide Susceptibility WebGIS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Landslide susceptibility mapping and population exposure in the Italian Alps." />
+<link rel="stylesheet" href="assets/css/custom-styles.css" />
+</head>
+<body>
+
+<nav class="gs-nav" id="gs-nav">
+  <a href="index.html" class="brand">
+    <span class="logo">G</span>
+    <span>GeoSlide Valtellina</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li class="active"><a href="index.html">Home</a></li>
+    <li><a href="pages/methodology.html">Methodology</a></li>
+    <li><a href="pages/webgis.html">WebGIS</a></li>
+    <li><a href="pages/results.html">Results</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="gs-hero">
+  <div class="gs-hero-inner">
+    <div>
+      <span class="kicker">Italian Alps · South of Bormio</span>
+      <h1>Mapping landslide risk across <em>Valtellina.</em></h1>
+      <p class="subtitle">
+        A data-driven susceptibility model and population exposure
+        assessment for a 140 km² alpine catchment — built with QGIS, R,
+        and an open-source WebGIS stack.
+      </p>
+      <div class="actions">
+        <a href="pages/webgis.html" class="gs-btn gs-btn-primary">
+          Explore the Map <span class="arrow">→</span>
+        </a>
+        <a href="pages/methodology.html" class="gs-btn gs-btn-ghost">Methodology</a>
+      </div>
+    </div>
+    <figure class="gs-hero-fig reveal d2">
+      <img src="images/processed layers/dtm.png" alt="DTM" />
+      <div class="fig-caption">
+        <b>Fig. 01 · DTM</b>
+        <span>5 m · EPSG:32632</span>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Study Area</span>
+      <h2>A 140 km² window into alpine hazard</h2>
+      <p class="lede">Rugged terrain, glacial valleys, and scattered mountain communities, characterised at 5 m spatial resolution.</p>
+    </div>
+    <div class="gs-stats">
+      <div class="gs-stat"><span class="num">140.79</span><span class="lbl">km² · total area</span></div>
+      <div class="gs-stat"><span class="num">943–3414</span><span class="lbl">m · elevation</span></div>
+      <div class="gs-stat"><span class="num">5</span><span class="lbl">m / pixel</span></div>
+      <div class="gs-stat"><span class="num">32632</span><span class="lbl">UTM 32N · EPSG</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- LAYER GRID (2-col) -->
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Environmental Factors</span>
+      <h2>Ten <em>conditioning</em> layers</h2>
+      <p class="lede">Terrain, vegetation, geology, and infrastructure — each preprocessed and resampled to a common 5 m analysis grid.</p>
+    </div>
+
+    <div class="gs-layer-grid">
+
+      <!-- 01 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Raster · 5 m</span>
+          <span class="num">01</span>
+          <img src="images/processed layers/dtm.png" alt="DTM">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Digital <em>Terrain Model</em></h3>
+          <p>The elevation baseline of the study area — 943 m at the valley floor near Valdidentro up to 3,414 m on the northern ridges. Every other layer is derived from or aligned to this raster.</p>
+          <div class="tags"><span>Regional LiDAR</span><span>5 m raster</span><span>EPSG:32632</span></div>
+        </div>
+      </article>
+
+      <!-- 02 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Continuous · °</span>
+          <span class="num">02</span>
+          <img src="images/processed layers/Slope.png" alt="Slope">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Slope <em>angle</em></h3>
+          <p>The single strongest predictor of landslide occurrence. As the angle increases, shear stress rises and the probability of failure grows — making slope the backbone of the model.</p>
+          <div class="tags"><span>Derived from DTM</span><span>Degrees</span></div>
+        </div>
+      </article>
+
+      <!-- 03 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Circular · °</span>
+          <span class="num">03</span>
+          <img src="images/processed layers/aspect.png" alt="Aspect">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Aspect <em>direction</em></h3>
+          <p>Slope direction controls solar exposure, snowmelt timing, and soil moisture — all of which shift the conditions that trigger shallow landslides.</p>
+          <div class="tags"><span>Derived from DTM</span><span>0–360°</span></div>
+        </div>
+      </article>
+
+      <!-- 04 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Continuous · 1/m</span>
+          <span class="num">04</span>
+          <img src="images/processed layers/plan.png" alt="Plan curvature">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Plan <em>curvature</em></h3>
+          <p>Highlights where water converges or diverges laterally. Concave plan positions collect runoff and raise pore-water pressure — a precondition for slope failure.</p>
+          <div class="tags"><span>Derived from DTM</span><span>Continuous</span></div>
+        </div>
+      </article>
+
+      <!-- 05 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Continuous · 1/m</span>
+          <span class="num">05</span>
+          <img src="images/processed layers/profile.png" alt="Profile curvature">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Profile <em>curvature</em></h3>
+          <p>Controls where material accelerates or decelerates downslope. Convex profiles are prone to detachment; concave zones tend to accumulate failed material.</p>
+          <div class="tags"><span>Derived from DTM</span><span>Continuous</span></div>
+        </div>
+      </article>
+
+      <!-- 06 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Categorical · 1:10k</span>
+          <span class="num">06</span>
+          <img src="images/processed layers/dusaf.png" alt="DUSAF">
+        </div>
+        <div class="gs-layer-body">
+          <h3>DUSAF <em>land use</em></h3>
+          <p>The Lombardy Region's land-use database at 1:10,000. Vegetation cover, rock outcrops, and human land use each influence runoff, infiltration, and root reinforcement.</p>
+          <div class="tags"><span>Lombardy Region</span><span>1:10,000</span></div>
+        </div>
+      </article>
+
+      <!-- 07 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Raster · 10 m</span>
+          <span class="num">07</span>
+          <img src="images/processed layers/NDVI_1.png" alt="NDVI">
+        </div>
+        <div class="gs-layer-body">
+          <h3>NDVI <em>greenness</em></h3>
+          <p>The Normalized Difference Vegetation Index measures vegetation greenness and vigour. Dense root systems reinforce soil and reduce shallow-failure probability.</p>
+          <div class="tags"><span>Sentinel-2</span><span>10 m raster</span></div>
+        </div>
+      </article>
+
+      <!-- 08 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Vector · lines</span>
+          <span class="num">08</span>
+          <img src="images/processed layers/Faults.png" alt="Faults">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Geological <em>faults</em></h3>
+          <p>Distance to mapped faults from the GeoPortale Lombardia dataset. Fault zones act as weak planes and often correlate with clusters of deep-seated landslides.</p>
+          <div class="tags"><span>GeoPortale Lombardia</span><span>Buffer distances</span></div>
+        </div>
+      </article>
+
+      <!-- 09 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Vector · lines</span>
+          <span class="num">09</span>
+          <img src="images/processed layers/rivers.png" alt="Rivers">
+        </div>
+        <div class="gs-layer-body">
+          <h3>River <em>network</em></h3>
+          <p>River networks from OpenStreetMap, buffered at 50 / 100 / 200 / 500 m. Stream undercutting at valley bottoms is a classic trigger for toe-of-slope failures.</p>
+          <div class="tags"><span>OpenStreetMap</span><span>Multi-ring buffer</span></div>
+        </div>
+      </article>
+
+      <!-- 10 -->
+      <article class="gs-layer">
+        <div class="gs-layer-media">
+          <span class="badge"><span class="dot"></span>Vector · lines</span>
+          <span class="num">10</span>
+          <img src="images/processed layers/Roads.png" alt="Roads">
+        </div>
+        <div class="gs-layer-body">
+          <h3>Road <em>infrastructure</em></h3>
+          <p>Road networks from OpenStreetMap, buffered with the same ring distances. Cuts and fills along mountain roads locally modify slope stability and alter drainage.</p>
+          <div class="tags"><span>OpenStreetMap</span><span>Multi-ring buffer</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="gs-section dark">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Pipeline</span>
+      <h2>From raw layers to <em>risk-informed</em> decisions</h2>
+      <p class="lede">Three stages, ten predictors, one thousand sample points — validated end-to-end.</p>
+    </div>
+    <div class="gs-pipeline">
+      <div class="gs-step">
+        <span class="n">01</span>
+        <h3>Data Preprocessing</h3>
+        <p>Slope, aspect, plan &amp; profile curvature derived from the DTM. Distance buffers to faults, roads, and rivers. No-Landslide Zones removed where they overlap the IFFI inventory.</p>
+      </div>
+      <div class="gs-step">
+        <span class="n">02</span>
+        <h3>Susceptibility Model</h3>
+        <p>R + ModelMap with 700 training and 300 testing points. Continuous susceptibility raster (0–1), validated with an error matrix. Overall accuracy: 0.69.</p>
+      </div>
+      <div class="gs-step">
+        <span class="n">03</span>
+        <h3>Exposure Assessment</h3>
+        <p>Susceptibility reclassified into low / moderate / high / very high. Zonal statistics with WorldPop reveal population counts per risk class.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY RESULTS -->
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Key Results</span>
+      <h2>Model performance &amp; population <em>at risk</em></h2>
+      <p class="lede">Headline numbers from the final susceptibility model and the WorldPop exposure analysis.</p>
+    </div>
+    <div class="gs-stats">
+      <div class="gs-stat"><span class="num">0.69</span><span class="lbl">Overall accuracy</span></div>
+      <div class="gs-stat"><span class="num">&gt; 10<em>%</em></span><span class="lbl">Population · medium+ risk</span></div>
+      <div class="gs-stat"><span class="num">1,000</span><span class="lbl">Sample points</span></div>
+      <div class="gs-stat"><span class="num">4</span><span class="lbl">Susceptibility classes</span></div>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="pages/results.html" class="gs-btn gs-btn-primary">
+        See full results <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="gs-cta">
+  <h2>Open the <em>interactive</em> map</h2>
+  <p>Explore the susceptibility raster, toggle terrain layers, and draw your own region of interest — live in the browser.</p>
+  <a href="pages/webgis.html" class="gs-btn gs-btn-primary">Launch WebGIS <span class="arrow">→</span></a>
+</div>
+
+<!-- FOOTER -->
+<footer class="gs-footer">
+  <div class="gs-footer-inner">
+    <div>
+      <div class="brand-row"><span class="logo">G</span><span>GeoSlide Valtellina</span></div>
+      <p style="color:var(--muted); max-width:380px; font-family:var(--serif); font-size:.95rem; font-weight:300;">
+        Landslide susceptibility mapping &amp; population exposure assessment in the Italian Alps — south of Bormio, Lombardy.
+      </p>
+    </div>
+    <div>
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="pages/methodology.html">Methodology</a></li>
+        <li><a href="pages/webgis.html">WebGIS</a></li>
+        <li><a href="pages/results.html">Results</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Data</h4>
+      <ul>
+        <li>DTM — 5 m raster</li>
+        <li>IFFI inventory</li>
+        <li>WorldPop exposure</li>
+        <li>OpenStreetMap vectors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="gs-footer-bottom">
+    <span>© GeoSlide Valtellina · Academic project</span>
+    <span>QGIS · R · GDAL · Leaflet</span>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('gs-nav');
+const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Methodology · GeoSlide Valtellina</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../assets/css/custom-styles.css" />
+</head>
+<body>
+
+<nav class="gs-nav" id="gs-nav">
+  <a href="../index.html" class="brand">
+    <span class="logo">G</span>
+    <span>GeoSlide Valtellina</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li class="active"><a href="methodology.html">Methodology</a></li>
+    <li><a href="webgis.html">WebGIS</a></li>
+    <li><a href="results.html">Results</a></li>
+  </ul>
+</nav>
+
+<header class="gs-page-head">
+  <span class="eyebrow">Methodology</span>
+  <h1>From raw data to a validated hazard model</h1>
+  <p>Datasets, preprocessing, statistical modelling, and exposure analysis for the Valtellina catchment.</p>
+</header>
+
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Datasets</span>
+      <h2>Seven complementary data sources</h2>
+      <p class="lede">Open and regional layers combined into a common 5 m analysis grid.</p>
+    </div>
+
+    <table class="gs-table">
+      <thead>
+        <tr><th>Layer</th><th>Source</th><th>Resolution / Scale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Digital Terrain Model</b></td><td>Regional LiDAR</td><td>5 m raster</td></tr>
+        <tr><td><b>Land use / land cover</b> (DUSAF)</td><td>Lombardy Region</td><td>Vector · 1:10,000</td></tr>
+        <tr><td><b>Landslide inventory</b></td><td>IFFI catalogue</td><td>Polygons · 1:10,000</td></tr>
+        <tr><td><b>Roads &amp; rivers</b></td><td>OpenStreetMap</td><td>Vector lines</td></tr>
+        <tr><td><b>Geological faults</b></td><td>GeoPortale Lombardia</td><td>Vector lines</td></tr>
+        <tr><td><b>NDVI</b></td><td>Sentinel-2</td><td>10 m raster</td></tr>
+        <tr><td><b>Population</b></td><td>WorldPop</td><td>100 m raster</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Workflow</span>
+      <h2>Three sequential steps</h2>
+      <p class="lede">Each step feeds the next — preprocessing shapes the model, and the model drives the exposure analysis.</p>
+    </div>
+
+    <div class="gs-timeline">
+      <div class="gs-tl-item">
+        <span class="step">Step 1</span>
+        <h3>Data preprocessing</h3>
+        <p>Slope, aspect, plan &amp; profile curvature derived from the DTM. Distance buffers (50 / 100 / 200 / 500 / &gt;500 m) around roads, rivers, and faults. No-Landslide Zones defined as slope &lt;20° or &gt;70°, and removed wherever they overlap the IFFI inventory.</p>
+      </div>
+      <div class="gs-tl-item">
+        <span class="step">Step 2</span>
+        <h3>Susceptibility model</h3>
+        <p>The <b>ModelMap</b> R package, invoked from the QGIS Processing Toolbox, fits a generalized linear model on the sampled predictors. Sample points were generated with the QGIS Point Sampling Tool and split into training and testing sets.</p>
+      </div>
+      <div class="gs-tl-item">
+        <span class="step">Step 3</span>
+        <h3>Exposure assessment</h3>
+        <p>Susceptibility reclassified into four classes (low, moderate, high, very high). WorldPop raster reprojected to EPSG:32632 and combined with the classified susceptibility map using zonal statistics — producing population counts per class.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gs-section">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Sampling</span>
+      <h2>Training &amp; testing split</h2>
+      <p class="lede">One thousand points, balanced 50 / 50 between landslide and non-landslide, split 70 / 30 between training and testing.</p>
+    </div>
+
+    <table class="gs-table" style="max-width:640px; margin:0 auto;">
+      <thead>
+        <tr><th>Set</th><th>Hazard</th><th>Number of points</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Training</td><td>0 — Non-landslide</td><td>350</td></tr>
+        <tr><td>Training</td><td>1 — Landslide</td><td>350</td></tr>
+        <tr><td>Testing</td><td>0 — Non-landslide</td><td>150</td></tr>
+        <tr><td>Testing</td><td>1 — Landslide</td><td>150</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="gs-section tint">
+  <div class="gs-container">
+    <div class="gs-header">
+      <span class="eyebrow">Field notes</span>
+      <h2>Errors &amp; how we fixed them</h2>
+    </div>
+
+    <div class="gs-grid-3">
+      <div class="gs-card">
+        <div class="icon">01</div>
+        <h3>Extent mismatch</h3>
+        <p>Environmental factor layers had to share identical extent and pixel size — otherwise the model crashed during calculation.</p>
+      </div>
+      <div class="gs-card">
+        <div class="icon">02</div>
+        <h3>Filename mismatch</h3>
+        <p>Layer filenames must match exactly the parameter names in the R script — otherwise the model aborted.</p>
+      </div>
+      <div class="gs-card">
+        <div class="icon">03</div>
+        <h3>NoData collisions</h3>
+        <p>NoData was set to 9999 across all layers to prevent the calculation from stopping on edge pixels.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="gs-footer">
+  <div class="gs-footer-inner">
+    <div>
+      <div class="brand-row"><span class="logo">G</span><span>GeoSlide Valtellina</span></div>
+      <p style="color:rgba(255,255,255,.55); font-family:var(--font-serif); font-size:1rem;">
+        Landslide susceptibility mapping &amp; population exposure assessment.
+      </p>
+    </div>
+    <div>
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="methodology.html">Methodology</a></li>
+        <li><a href="webgis.html">WebGIS</a></li>
+        <li><a href="results.html">Results</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Data</h4>
+      <ul>
+        <li>DTM — 5 m raster</li>
+        <li>IFFI inventory</li>
+        <li>WorldPop exposure</li>
+        <li>OpenStreetMap vectors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="gs-footer-bottom">
+    <span>© GeoSlide Valtellina · Academic project</span>
+    <span>QGIS · R · GDAL · Leaflet</span>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('gs-nav');
+const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+</script>
+</body>
+</html>

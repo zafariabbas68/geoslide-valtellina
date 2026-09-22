@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# Backups / temp
+*.bak
+*.bak.*
+*.old
+*.tmp
+*.log
+*.swp
+
+# GDAL sidecars
+processing_the_layers/**/*.aux.xml
+processing_the_layers/**/*.gpkg-shm
+processing_the_layers/**/*.gpkg-wal
+
+# Raw source data — not needed on the web
+processing_the_layers/
+
+# Node / Vercel
+node_modules/
+.vercel/
